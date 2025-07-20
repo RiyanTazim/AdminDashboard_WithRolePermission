@@ -1,7 +1,7 @@
 @extends('Backend.admin.admin_dashboard')
 
 @section('admin')
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
     <div class="pc-container">
         <div class="container py-5">
             <div class="row justify-content-center">
@@ -11,10 +11,6 @@
                             <h4 class="mb-0">Add Permission</h4>
                         </div>
                         <div class="card-body">
-
-                            {{-- @if (Session::has('success'))
-                                <div class="text-white">{{ Session::get('success') }}</div>
-                            @endif --}}
                             <form id="permissionForm" action="{{ route('permission.store') }}" method="POST">
                                 @csrf
                                 <div class="mb-3">
