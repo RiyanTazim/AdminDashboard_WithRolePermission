@@ -20,10 +20,10 @@
             </li>
             <li class="nav-item nav-category">web apps</li>
             <li class="nav-item">
-                
+
             </li>
-            
-            
+
+
             <li class="nav-item">
                 <a class="nav-link" data-bs-toggle="collapse" href="#uiComponents" role="button" aria-expanded="false"
                     aria-controls="uiComponents">
@@ -34,7 +34,7 @@
                 <div class="collapse" id="uiComponents">
                     <ul class="nav sub-menu">
                         <li class="nav-item">
-                            <a href="{{route('user.profile')}}" class="nav-link">Profile</a>
+                            <a href="{{ route('user.profile') }}" class="nav-link">Profile</a>
                         </li>
                         <li class="nav-item">
                             <a href="{{ route('user.change.password') }}" class="nav-link">Change Password</a>
@@ -42,13 +42,29 @@
                     </ul>
                 </div>
             </li>
-            <li class="nav-item nav-category">Docs</li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="collapse" href="#uiComponent" role="button" aria-expanded="false"
+                    aria-controls="uiComponent">
+                    <i class="link-icon" data-feather="zap"></i>
+                    <span class="link-title">Action</span>
+                    <i class="link-arrow" data-feather="chevron-down"></i>
+                </a>
+                <div class="collapse" id="uiComponent">
+
+                    <ul class="nav sub-menu">
+                        <li class="nav-item">
+                            <a href="{{ route('article.list') }}" class="nav-link"> Article List</a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+            {{-- <li class="nav-item nav-category">Docs</li>
             <li class="nav-item">
                 <a href="https://www.nobleui.com/html/documentation/docs.html" target="_blank" class="nav-link">
                     <i class="link-icon" data-feather="hash"></i>
                     <span class="link-title">Documentation</span>
                 </a>
-            </li>
+            </li> --}}
         </ul>
     </div>
 </nav>

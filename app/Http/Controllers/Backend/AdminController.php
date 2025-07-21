@@ -5,11 +5,22 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
+use Spatie\Permission\Models\Role;
 
-class AdminController extends Controller
+class AdminController extends Controller //implements HasMiddleware
 {
+    public function __construct()
+    {
+        $this->middleware('permission:View users')->only(['index']);
+        // $this->middleware('permission:Create users')->only(['create', 'store']);
+        $this->middleware('permission:Edit users')->only(['edit', 'update']);
+        $this->middleware('permission:Delete users')->only(['destroy']);
+    }
     public function admindashboard()
     {
         return view('Backend.admin.index');
@@ -103,7 +114,8 @@ class AdminController extends Controller
 
     public function adminuserlist()
     {
-        $users = User::where('role', 'user')->get(); /// for specific role
+        $users = User::paginate(10);
+        // $users = User::where('role', 'user')->paginate(10);
 
         return view('Backend.admin.user_list', compact('users'));
     }
@@ -213,15 +225,25 @@ class AdminController extends Controller
     public function userprofileedit($id)
     {
 
-        $user = User::find($id);
-
-        return view('Backend.admin.user_profile_edit', compact('user'));
+        $user  = User::find($id);
+        $roles = Role::orderBy('name', 'asc')->get();
+        return view('Backend.admin.user_profile_edit', compact('user', 'roles'));
     }
 
     public function userprofileupdate(Request $request, $id)
     {
+        $user = User::findOrFail($id);
 
-        $user = User::find($id);
+        $validator = Validator::make($request->all(), [
+            'username' => 'required|min:3',
+            'name'     => 'required|max:100',
+            'email'    => 'required|email|unique:users,email,' . $user->id,
+            'phone'    => 'required|digits:11|unique:users,phone,' . $user->id,
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
 
         $user->username = $request->username;
         $user->name     = $request->name;
@@ -229,22 +251,27 @@ class AdminController extends Controller
         $user->phone    = $request->phone;
         $user->address  = $request->address;
 
+        // Handle photo upload
         if ($request->file('photo')) {
-            $file = $request->file('photo');
-
+            $file     = $request->file('photo');
             $filename = date('YmdHi') . $file->getClientOriginalName();
             $file->move(public_path('upload/user_images'), $filename);
-            $user['photo'] = $filename;
+            $user->photo = $filename;
         }
 
         $user->save();
+
+        // ✅ Sync user roles
+        if ($request->has('roles')) {
+            $user->syncRoles($request->roles);
+        }
 
         $notification = [
             'message'    => 'User Profile Updated Successfully',
             'alert-type' => 'success',
         ];
-        return back()->with($notification);
 
+        return back()->with($notification);
     }
 
     public function userprofiledelete($id)

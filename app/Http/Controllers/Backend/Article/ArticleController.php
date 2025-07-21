@@ -4,12 +4,22 @@ namespace App\Http\Controllers\Backend\Article;
 use App\Http\Controllers\Controller;
 use App\Models\Article;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Facades\Validator;
 
-class ArticleController extends Controller
+class ArticleController extends Controller//implements HasMiddleware
+
 {
+    public function __construct()
+    {
+        $this->middleware('permission:View')->only(['index']);
+        $this->middleware('permission:Create')->only(['create', 'store']);
+        $this->middleware('permission:Edit')->only(['edit', 'update']);
+        $this->middleware('permission:Delete')->only(['destroy']);
+    }
     public function index(Request $request)
     {
+        
         $search = $request->input('search');
 
         $articles = Article::when($search, function ($query, $search) {

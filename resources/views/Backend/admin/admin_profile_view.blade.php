@@ -2,8 +2,7 @@
 
 
 @section('admin')
-
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
     <div class="page-content">
 
         <div class="row profile-body">
@@ -14,10 +13,14 @@
                         <div class="d-flex align-items-center justify-content-between mb-2">
 
                             <img class="wd-100 rounded-circle"
-                                src="{{ !empty($profileData->photo) ? url('upload/admin_images/' . $profileData->photo) : url('upload/no_image.jpg') }}"
+                                src="{{ !empty($profileData->photo) ? url('upload/user_images/' . $profileData->photo) : url('upload/no_image.jpg') }}"
                                 alt="profile">
 
-                            <span class="h4 ms-4 ">{{ $profileData->name }}</span>
+                            {{-- <span class="h4 ms-4 ">{{ $profileData->name }}</span> --}}
+                            <div class="ms-3">
+                                <span class="h4 d-block">{{ $profileData->name }}</span>
+                                <small class="text-muted">{{ $profileData->roles->pluck('name')->implode(', ') }}</small>
+                            </div>
                         </div>
                         <div class="mt-3">
                             <label class="tx-11 fw-bolder mb-0 text-uppercase">UserName:</label>
@@ -59,32 +62,33 @@
 
                             <h6 class="card-title">Update Admin Profile</h6>
 
-                            <form class="forms-sample" method="POST" action="{{route('admin.profile.store')}}" enctype="multipart/form-data">
+                            <form class="forms-sample" method="POST" action="{{ route('admin.profile.store') }}"
+                                enctype="multipart/form-data">
                                 @csrf
                                 <div class="mb-3">
                                     <label for="exampleInputUsername1" class="form-label">Username</label>
-                                    <input type="text" name="username" class="form-control" id="exampleInputUsername1" autocomplete="off"
-                                        value="{{$profileData->username}}">
+                                    <input type="text" name="username" class="form-control" id="exampleInputUsername1"
+                                        autocomplete="off" value="{{ $profileData->username }}">
                                 </div>
                                 <div class="mb-3">
                                     <label for="exampleInputUsername1" class="form-label">Name</label>
-                                    <input type="text" name="name" class="form-control" id="exampleInputUsername1" autocomplete="off"
-                                        value="{{$profileData->name}}">
+                                    <input type="text" name="name" class="form-control" id="exampleInputUsername1"
+                                        autocomplete="off" value="{{ $profileData->name }}">
                                 </div>
                                 <div class="mb-3">
                                     <label for="exampleInputUsername1" class="form-label">Email</label>
-                                    <input type="email" name="email" class="form-control" id="exampleInputUsername1" autocomplete="off"
-                                        value="{{$profileData->email}}">
+                                    <input type="email" name="email" class="form-control" id="exampleInputUsername1"
+                                        autocomplete="off" value="{{ $profileData->email }}">
                                 </div>
                                 <div class="mb-3">
                                     <label for="exampleInputUsername1" class="form-label">Phone</label>
-                                    <input type="text" name="phone" class="form-control" id="exampleInputUsername1" autocomplete="off"
-                                        value="{{$profileData->phone}}">
+                                    <input type="text" name="phone" class="form-control" id="exampleInputUsername1"
+                                        autocomplete="off" value="{{ $profileData->phone }}">
                                 </div>
                                 <div class="mb-3">
                                     <label for="exampleInputUsername1" class="form-label">Address</label>
-                                    <input type="text" name="address" class="form-control" id="exampleInputUsername1" autocomplete="off"
-                                        value="{{$profileData->address}}">
+                                    <input type="text" name="address" class="form-control" id="exampleInputUsername1"
+                                        autocomplete="off" value="{{ $profileData->address }}">
                                 </div>
                                 <div class="mb-3">
                                     <label for="exampleInputEmail1" class="form-label">Photo</label>
@@ -92,9 +96,11 @@
                                 </div>
                                 <div class="mb-3">
                                     <label for="exampleInputEmail1" class="form-label">Photo</label>
-                                    <img id="showImage" class="wd-80 rounded-circle" src="{{(!empty($profileData->photo)) ? url('upload/admin_images/'.$profileData->photo) : url('/upload/no_image.jpg')}}" alt="profile">
+                                    <img id="showImage" class="wd-80 rounded-circle"
+                                        src="{{ !empty($profileData->photo) ? url('upload/admin_images/' . $profileData->photo) : url('/upload/no_image.jpg') }}"
+                                        alt="profile">
                                 </div>
-                                
+
                                 <button type="submit" class="btn btn-primary me-2">Update Profile</button>
                             </form>
 
@@ -109,15 +115,14 @@
         </div>
 
         <script type="text/javascript">
-            $(document).ready(function(){
-                $('#image').change(function(e){
+            $(document).ready(function() {
+                $('#image').change(function(e) {
                     var reader = new FileReader();
-                    reader.onload = function(e){
-                        $('#showImage').attr('src',e.target.result);
+                    reader.onload = function(e) {
+                        $('#showImage').attr('src', e.target.result);
                     }
                     reader.readAsDataURL(e.target.files['0']);
                 });
             });
         </script>
-
     @endsection

@@ -40,12 +40,17 @@
                                                     <td>{{ $role->name }}</td>
                                                     <td>{{ $role->permissions->pluck('name')->implode(', ') }}</td>
                                                     <td>
-                                                        <a href="{{ route('role.edit', $role->id) }}"
-                                                            class="btn btn-sm btn-inverse-warning" title="Edit"><i
-                                                                data-feather="edit"></i></a>
-                                                        <a href="{{ route('role.delete', $role->id) }}"
-                                                            class="btn btn-sm btn-inverse-danger delete-confirm"
-                                                            title="Delete"><i data-feather="trash-2"></i></a>
+                                                        @can('Edit')
+                                                            <a href="{{ route('role.edit', $role->id) }}"
+                                                                class="btn btn-sm btn-inverse-warning" title="Edit"><i
+                                                                    data-feather="edit"></i></a>
+                                                        @endcan
+
+                                                        @can('Delete')
+                                                            <a href="{{ route('role.delete', $role->id) }}"
+                                                                class="btn btn-sm btn-inverse-danger delete-confirm"
+                                                                title="Delete"><i data-feather="trash-2"></i></a>
+                                                        @endcan
                                                     </td>
                                                 </tr>
                                             @endforeach

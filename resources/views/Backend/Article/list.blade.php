@@ -44,15 +44,6 @@
                                 <p class="text-muted mb-0">No Article found.</p>
                             @else
                                 <div class="table-responsive">
-                                    {{-- <form method="GET" action="{{ route('article.list') }}" class="mb-4">
-                                        <div class="d-flex align-items-center" style="gap: 0.5rem;">
-                                            <input type="text" name="search" class="form-control w-25"
-                                                placeholder="Search..." autocomplete="off">
-
-                                            <button type="submit"
-                                                class="btn btn-light text-dark bg-white border">Search</button>
-                                        </div>
-                                    </form> --}}
                                     <table class="table table-bordered table-hover">
                                         <thead>
                                             <tr>
@@ -70,7 +61,7 @@
                                                     <td>{{ $article->title }}</td>
                                                     <td class="body-preview">{{ $article->body }}</td>
                                                     <td>{{ $article->author }}</td>
-                                                    <td>
+                                                    {{-- <td>
                                                         <a href="{{ route('article.edit', $article->id) }}"
                                                             class="btn btn-sm btn-inverse-warning" title="Edit"><i
                                                                 data-feather="edit"></i></a>
@@ -80,6 +71,22 @@
                                                             <i data-feather="trash-2"></i>
                                                         </a>
 
+                                                    </td> --}}
+                                                    <td>
+                                                        @can('Edit')
+                                                            <a href="{{ route('article.edit', $article->id) }}"
+                                                                class="btn btn-sm btn-inverse-warning" title="Edit">
+                                                                <i data-feather="edit"></i>
+                                                            </a>
+                                                        @endcan
+
+                                                        @can('Delete')
+                                                            <a href="{{ route('article.delete', $article->id) }}"
+                                                                class="btn btn-sm btn-inverse-danger delete-confirm"
+                                                                title="Delete">
+                                                                <i data-feather="trash-2"></i>
+                                                            </a>
+                                                        @endcan
                                                     </td>
                                                 </tr>
                                             @endforeach
@@ -88,8 +95,7 @@
                                 </div>
                             @endif
                             <div class="d-flex mt-3 ms-auto justify-content-end">
-                                {{-- {{ $articles->links() }} --}}
-                                {{ $articles->appends(['search' => request('search')])->links() }}
+                                {{ $articles->links() }}
                             </div>
                         </div>
                     </div>

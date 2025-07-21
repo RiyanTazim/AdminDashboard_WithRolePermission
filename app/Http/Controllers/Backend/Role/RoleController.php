@@ -6,9 +6,21 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
+use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Routing\Controllers\HasMiddleware;
 
-class RoleController extends Controller
+class RoleController extends Controller //implements HasMiddleware
 {
+    public function __construct()
+    {
+        // $this->middleware('permission:View roles')->only(['index']);
+        // $this->middleware('permission:Create roles')->only(['create', 'store']);
+        // $this->middleware('permission:Edit roles')->only(['edit', 'update']);
+        // $this->middleware('permission:Delete roles')->only(['destroy']);
+
+        $this->middleware('role:Admin|Super Admin')->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
+
+    }
     public function index()
     {
         $roles = Role::orderBy('created_at', 'asc')->paginate(10);

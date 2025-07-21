@@ -44,14 +44,18 @@
                                                     <td>{{ $permission->name }}</td>
                                                     {{-- <td>{{ $permission->created_at->format('d M Y') }}</td> --}}
                                                     <td>
-                                                        <a href="{{ route('permission.edit', $permission->id) }}"
-                                                            class="btn btn-sm btn-inverse-warning" title="Edit"><i
-                                                                data-feather="edit"></i></a>
-                                                        <a href="{{ route('permission.delete', $permission->id) }}"
-                                                            class="btn btn-sm btn-inverse-danger delete-confirm"
-                                                            title="Delete">
-                                                            <i data-feather="trash-2"></i>
-                                                        </a>
+                                                        @can('Edit')
+                                                            <a href="{{ route('permission.edit', $permission->id) }}"
+                                                                class="btn btn-sm btn-inverse-warning" title="Edit"><i
+                                                                    data-feather="edit"></i></a>
+                                                        @endcan
+                                                        @can('Delete')
+                                                            <a href="{{ route('permission.delete', $permission->id) }}"
+                                                                class="btn btn-sm btn-inverse-danger delete-confirm"
+                                                                title="Delete">
+                                                                <i data-feather="trash-2"></i>
+                                                            </a>
+                                                        @endcan
 
                                                     </td>
                                                 </tr>
@@ -71,28 +75,28 @@
     </div>
 
     <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        document.querySelectorAll('.delete-confirm').forEach(function (button) {
-            button.addEventListener('click', function (e) {
-                e.preventDefault();
-                const url = this.getAttribute('href');
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.delete-confirm').forEach(function(button) {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const url = this.getAttribute('href');
 
-                Swal.fire({
-                    title: 'Are you sure?',
-                    text: "This action cannot be undone.",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Yes, delete it!'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        window.location.href = url;
-                    }
+                    Swal.fire({
+                        title: 'Are you sure?',
+                        text: "This action cannot be undone.",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes, delete it!'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = url;
+                        }
+                    });
                 });
             });
         });
-    });
-</script>
+    </script>
 
 @endsection

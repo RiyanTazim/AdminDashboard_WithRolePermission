@@ -3,11 +3,22 @@ namespace App\Http\Controllers\Backend\Permission;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Facades\Validator;
 use Spatie\Permission\Models\Permission;
 
-class PermissionController extends Controller
+class PermissionController extends Controller//implements HasMiddleware
 {
+    public function __construct()
+    {
+        // $this->middleware('permission:View permissions')->only(['index']);
+        // $this->middleware('permission:Create permissions')->only(['create', 'store']);
+        // $this->middleware('permission:Edit permissions')->only(['edit', 'update']);
+        // $this->middleware('permission:Delete permissions')->only(['destroy']);
+        $this->middleware('role:Admin|Super Admin')->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
+
+    }
+
     //method to display a list of permissions
     public function index()
     {

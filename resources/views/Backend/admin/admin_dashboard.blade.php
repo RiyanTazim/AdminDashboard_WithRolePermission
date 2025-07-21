@@ -19,7 +19,17 @@ License: For each use you must have a valid license purchased only from above li
     <meta name="keywords"
         content="nobleui, bootstrap, bootstrap 5, bootstrap5, admin, dashboard, template, responsive, css, sass, html, theme, front-end, ui kit, web">
 
-    <title>Admin Dashboard</title>
+    <title>
+        @if (auth()->check())
+            @if (auth()->user()->hasRole('admin'))
+                Admin Dashboard
+            @else
+                {{ ucfirst(auth()->user()->roles->pluck('name')->first()) }} Dashboard
+            @endif
+        @else
+            Dashboard
+        @endif
+    </title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
