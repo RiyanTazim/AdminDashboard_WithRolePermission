@@ -6,6 +6,7 @@ use App\Models\Article;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Facades\Validator;
+use Yajra\DataTables\Facades\DataTables;
 
 class ArticleController extends Controller//implements HasMiddleware
 
@@ -19,18 +20,40 @@ class ArticleController extends Controller//implements HasMiddleware
     }
     public function index(Request $request)
     {
-        
-        $search = $request->input('search');
+        // if ($request->ajax()) {
+        //     $data = Article::get();
+        //     return datatables()->of($data)
+        //         ->addIndexColumn()
+        //         ->addColumn('body', function ($row) {
+        //             return strlen($row->body) > 40 ? substr($row->body, 0, 50) . '...' : $row->body;
+        //         })
+        //         ->addColumn('action', function ($row) {
+        //             return '<a href="' . route('article.edit', $row->id) . '" class="btn btn-sm btn-inverse-warning"><i data-feather="edit"></i></a>
+        //             <a href="' . route('article.delete', $row->id) . '" class="btn btn-sm btn-inverse-danger delete-confirm" title="Delete">
+        //                                         <i data-feather="trash-2"></i></a>';
+        //         })
+        //         ->rawColumns(['action'])
+        //         ->make(true);
+        // }
 
-        $articles = Article::when($search, function ($query, $search) {
-            return $query->where('title', 'like', "%{$search}%")
-                ->orWhere('body', 'like', "%{$search}%")
-                ->orWhere('author', 'like', "%{$search}%");
-        })
-            ->orderBy('created_at', 'asc')
-            ->paginate(10);
+        return view('Backend.Article.list');
+    }
 
-        return view('Backend.Article.list', compact('articles'));
+    public function getData(Request $request)
+    {
+        $data = Article::get();
+        return datatables()->of($data)
+            ->addIndexColumn()
+            ->addColumn('body', function ($row) {
+                return strlen($row->body) > 40 ? substr($row->body, 0, 50) . '...' : $row->body;
+            })
+            ->addColumn('action', function ($row) {
+                return '<a href="' . route('article.edit', $row->id) . '" class="btn btn-sm btn-inverse-warning"><i data-feather="edit"></i></a>
+                    <a href="' . route('article.delete', $row->id) . '" class="btn btn-sm btn-inverse-danger delete-confirm" title="Delete">
+                        <i data-feather="trash-2"></i></a>';
+            })
+            ->rawColumns(['action'])
+            ->make(true);
     }
 
     public function create()

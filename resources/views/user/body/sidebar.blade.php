@@ -31,7 +31,7 @@
                     <span class="link-title">Profile Action</span>
                     <i class="link-arrow" data-feather="chevron-down"></i>
                 </a>
-                <div class="collapse" id="uiComponents">
+                <div class="collapse {{ request()->routeIs('user.profile', 'user.change.password') ? 'show' : '' }}" id="uiComponents">
                     <ul class="nav sub-menu">
                         <li class="nav-item">
                             <a href="{{ route('user.profile') }}" class="nav-link">Profile</a>
@@ -49,7 +49,7 @@
                     <span class="link-title">Action</span>
                     <i class="link-arrow" data-feather="chevron-down"></i>
                 </a>
-                <div class="collapse" id="uiComponent">
+                <div class="collapse {{ request()->routeIs('article.list') ? 'show' : '' }}" id="uiComponent">
 
                     <ul class="nav sub-menu">
                         <li class="nav-item">

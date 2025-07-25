@@ -11,6 +11,18 @@
                 <input type="text" class="form-control" id="navbarForm" placeholder="Search here...">
             </div>
         </form>
+        @php
+            $primaryPath = public_path('upload/user_images/' . $profileData->photo);
+            $fallbackPath = public_path('upload/admin_images/' . $profileData->photo);
+
+            if (file_exists($primaryPath)) {
+                $imagePath = asset('upload/user_images/' . $profileData->photo);
+            } elseif (file_exists($fallbackPath)) {
+                $imagePath = asset('upload/admin_images/' . $profileData->photo);
+            } else {
+                $imagePath = asset('upload/no_image.jpg'); 
+            }
+        @endphp
         <ul class="navbar-nav">
             {{-- <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="appsDropdown" role="button"
@@ -218,14 +230,14 @@
                 <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button"
                     data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <img class="wd-30 ht-30 rounded-circle"
-                        src="{{ !empty($profileData->photo) ? url('upload/user_images/' . $profileData->photo) : url('/upload/no_image.jpg') }}"
+                        src="{{ $imagePath }}"
                         alt="profile">
                 </a>
                 <div class="dropdown-menu p-0" aria-labelledby="profileDropdown">
                     <div class="d-flex flex-column align-items-center border-bottom px-5 py-3">
                         <div class="mb-3">
                             <img class="wd-80 ht-80 rounded-circle"
-                                src="{{ !empty($profileData->photo) ? url('upload/user_images/' . $profileData->photo) : url('/upload/no_image.jpg') }}"
+                                src="{{ $imagePath }}"
                                 alt="">
                         </div>
                         <div class="text-center">

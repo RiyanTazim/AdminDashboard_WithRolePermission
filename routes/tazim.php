@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\Backend\AdminController;
 use App\Http\Controllers\Backend\Article\ArticleController;
+use App\Http\Controllers\Backend\DynamicPageController;
+use App\Http\Controllers\Backend\Mail\SMTPController;
 use App\Http\Controllers\Backend\Permission\PermissionController;
 use App\Http\Controllers\Backend\Role\RoleController;
 use App\Http\Controllers\Backend\UserContoller;
@@ -39,8 +41,11 @@ Route::middleware(['auth'])->group(function () {
             Route::post('/admin/profile/store', 'adminprofilestore')->name('admin.profile.store');
             Route::get('/admin/change/password', 'adminchangepassword')->name('admin.change.password');
             Route::post('/admin/update/password', 'adminupdatepassword')->name('admin.update.password');
-            
+
             Route::get('/admin/user/list', 'adminuserlist')->name('admin.user.list');
+            Route::get('/admin/user/getData', 'getData')->name('admin.user.getData');
+            Route::get('/admin/user/create', 'adminusercreate')->name('admin.user.create');
+            Route::post('/admin/user/store', 'adminUserStore')->name('admin.user.store');
             Route::get('/user/status/{id}', 'userstatus')->name('user.status');
             Route::get('/user/password/reset/{id}', 'userpasswordreset')->name('user.password.reset');
             Route::post('/user/password/update/{id}', 'userpasswordupdate')->name('user.password.update');
@@ -52,6 +57,7 @@ Route::middleware(['auth'])->group(function () {
         // PermissionController
         Route::controller(PermissionController::class)->group(function () {
             Route::get('/admin/permission/list', 'index')->name('permission.list');
+            Route::get('/admin/permission/getData', 'getData')->name('permission.getData');
             Route::get('/admin/permission/create', 'create')->name('permission.create');
             Route::post('/admin/permission/store', 'store')->name('permission.store');
             Route::get('/admin/permission/edit/{id}', 'edit')->name('permission.edit');
@@ -62,17 +68,40 @@ Route::middleware(['auth'])->group(function () {
         // RoleController
         Route::controller(RoleController::class)->group(function () {
             Route::get('/admin/role/list', 'index')->name('role.list');
+            Route::get('/admin/role/getData', 'getData')->name('role.getData');
             Route::get('/admin/role/create', 'create')->name('role.create');
             Route::post('/admin/role/store', 'store')->name('role.store');
             Route::get('/admin/role/edit/{id}', 'edit')->name('role.edit');
             Route::post('/admin/role/update/{id}', 'update')->name('role.update');
             Route::get('/admin/role/delete/{id}', 'destroy')->name('role.delete');
         });
+
+        //SMTP Mail Configuration
+        Route::controller(SMTPController::class)->group(function () {
+            Route::get('/admin/mailconfig', 'index')->name('mailconfig.index');
+            Route::post('/admin/mailconfig/store', 'store')->name('mailconfig.store');
+            Route::get('/admin/mailconfig/send-mail', 'sendMail')->name('mailconfig.sendMail');
+            // Route::get('/admin/mail/edit/{id}', 'edit')->name('mail.edit');
+            // Route::post('/admin/mail/update/{id}', 'update')->name('mail.update');
+            // Route::get('/admin/mail/delete/{id}', 'destroy')->name('mail.delete');
+        });
+
+        //Dynamic Page
+        Route::controller((DynamicPageController::class))->group(function () {
+            Route::get('/admin/dynamicpage/list', 'index')->name('dynamicpage.list');
+            Route::get('/admin/dynamicpage/getData', 'getData')->name('dynamicpage.getData');
+            Route::get('/admin/dynamicpage/create', 'create')->name('dynamicpage.create');
+            Route::post('/admin/dynamicpage/store', 'store')->name('dynamicpage.store');
+            Route::get('/admin/dynamicpage/edit/{id}', 'edit')->name('dynamicpage.edit');
+            Route::post('/admin/dynamicpage/update/{id}', 'update')->name('dynamicpage.update');
+            Route::get('/admin/dynamicpage/delete/{id}', 'destroy')->name('dynamicpage.delete');
+        });
     });
 
     // Shared routes (accessible to both Admin and regular users)
     Route::controller(ArticleController::class)->group(function () {
         Route::get('/article/list', 'index')->name('article.list');
+        Route::get('/article/getData', 'getData')->name('article.getData');
         Route::get('/article/create', 'create')->name('article.create');
         Route::post('/article/store', 'store')->name('article.store');
         Route::get('/article/edit/{id}', 'edit')->name('article.edit');
@@ -89,7 +118,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/user/update/password', 'userupdatepassword')->name('user.update.password');
     });
 });
- /// End of Admin Route
+/// End of Admin Route
 
 //////////////// User Route ///////////////////
 
@@ -103,8 +132,6 @@ Route::middleware(['auth'])->group(function () {
 //         Route::get('/user/change/password', 'userchangepassword')->name('user.change.password');
 //         Route::post('/user/update/password', 'userupdatepassword')->name('user.update.password');
 //     });
-
-
 
 //     Route::controller(AdminController::class)->group(function () {
 //         Route::get('/admin/logout', 'adminlogout')->name('admin.logout');

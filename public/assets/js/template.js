@@ -1,13 +1,13 @@
 
-(function($) {
+(function ($) {
   'use strict';
-  $(function() {
+  $(function () {
     var body = $('body');
     var mainWrapper = $('.main-wrapper');
     var footer = $('footer');
     var sidebar = $('.sidebar');
     var navbar = $('.navbar').not('.top-navbar');
-    
+
 
     // Enable feather-icons with SVG markup
     feather.replace();
@@ -20,13 +20,13 @@
 
       var clipboard = new ClipboardJS('.btn-clipboard');
 
-      clipboard.on('success', function(e) {
+      clipboard.on('success', function (e) {
         console.log(e);
         e.trigger.innerHTML = 'copied';
-        setTimeout(function() {
+        setTimeout(function () {
           e.trigger.innerHTML = 'copy';
           e.clearSelection();
-        },700)
+        }, 700)
       });
     }
 
@@ -56,13 +56,13 @@
 
 
     // Close other submenu in sidebar on opening any
-    sidebar.on('show.bs.collapse', '.collapse', function() {
+    sidebar.on('show.bs.collapse', '.collapse', function () {
       sidebar.find('.collapse.show').collapse('hide');
     });
 
 
     // Sidebar toggle to sidebar-folded
-    $('.sidebar-toggler').on('click', function(e) {
+    $('.sidebar-toggler').on('click', function (e) {
       e.preventDefault();
       $('.sidebar-header .sidebar-toggler').toggleClass('active not-active');
       if (window.matchMedia('(min-width: 992px)').matches) {
@@ -90,73 +90,109 @@
 
 
     // Settings sidebar toggle
-    $('.settings-sidebar-toggler').on('click', function(e) {
+    $('.settings-sidebar-toggler').on('click', function (e) {
       $('body').toggleClass('settings-open');
     });
 
 
     // Sidebar theme settings
-    $("input:radio[name=sidebarThemeSettings]").click(function() {
+    $("input:radio[name=sidebarThemeSettings]").click(function () {
       $('body').removeClass('sidebar-light sidebar-dark');
       $('body').addClass($(this).val());
-     })
-
-
-
-    //Add active class to nav-link based on url dynamically
-    function addActiveClass(element) {
-        if (current === "") {
-          //for root url
-          if (element.attr('href').indexOf("index.html") !== -1) {
-            element.parents('.nav-item').last().addClass('active');
-            if (element.parents('.sub-menu').length) {
-              element.closest('.collapse').addClass('show');
-              element.addClass('active');
-            }
-          }
-        } else {
-          //for other url
-          if (element.attr('href').indexOf(current) !== -1) {
-            element.parents('.nav-item').last().addClass('active');
-            if (element.parents('.sub-menu').length) {
-              element.closest('.collapse').addClass('show');
-              element.addClass('active');
-            }
-            if (element.parents('.submenu-item').length) {
-              element.addClass('active');
-            }
-          }
-        }
-    }
-
-      var current = location.pathname.split("/").slice(-1)[0].replace(/^\/|\/$/g, '');
-      $('.nav li a', sidebar).each(function() {
-        var $this = $(this);
-        addActiveClass($this);
-      });
-
-    $('.horizontal-menu .nav li a').each(function() {
-      var $this = $(this);
-      addActiveClass($this);
     })
+
+
+    // Old Active function.....
+    // //Add active class to nav-link based on url dynamically
+    // function addActiveClass(element) {
+    //     if (current === "") {
+    //       //for root url
+    //       if (element.attr('href').indexOf("index.html") !== -1) {
+    //         element.parents('.nav-item').last().addClass('active');
+    //         if (element.parents('.sub-menu').length) {
+    //           element.closest('.collapse').addClass('show');
+    //           element.addClass('active');
+    //         }
+    //       }
+    //     } else {
+    //       //for other url
+    //       if (element.attr('href').indexOf(current) !== -1) {
+    //         element.parents('.nav-item').last().addClass('active');
+    //         if (element.parents('.sub-menu').length) {
+    //           element.closest('.collapse').addClass('show');
+    //           element.addClass('active');
+    //         }
+    //         if (element.parents('.submenu-item').length) {
+    //           element.addClass('active');
+    //         }
+    //       }
+    //     }
+    // }
+
+    //   var current = location.pathname.split("/").slice(-1)[0].replace(/^\/|\/$/g, '');
+    //   $('.nav li a', sidebar).each(function() {
+    //     var $this = $(this);
+    //     addActiveClass($this);
+    //   });
+
+    // $('.horizontal-menu .nav li a').each(function() {
+    //   var $this = $(this);
+    //   addActiveClass($this);
+    // })
+
+    // New Active Function...... active class to nav-link based on full route dynamically
+    // function addActiveClass(element) {
+    //   var currentFullPath = location.pathname; // Get the full current path
+    //   var href = element.attr('href'); // Get the full href of the link
+
+    //   // Remove leading/trailing slashes and compare full routes
+    //   var cleanCurrentPath = currentFullPath.replace(/^\/|\/$/g, '');
+    //   var cleanHref = href.replace(/^\/|\/$/g, '');
+
+    //   // Check if the full route matches exactly
+    //   if (cleanCurrentPath === cleanHref) {
+    //     element.parents('.nav-item').last().addClass('active');
+    //     if (element.parents('.sub-menu').length) {
+    //       element.closest('.collapse').addClass('show');
+    //       element.addClass('active');
+    //     }
+    //     if (element.parents('.submenu-item').length) {
+    //       element.addClass('active');
+    //     }
+    //   }
+    // }
+
+    // // Run on page load
+    // $(document).ready(function () {
+    //   var sidebar = $('.sidebar'); // Ensure sidebar is defined if used
+    //   $('.nav li a', sidebar).each(function () {
+    //     var $this = $(this);
+    //     addActiveClass($this);
+    //   });
+
+    //   $('.horizontal-menu .nav li a').each(function () {
+    //     var $this = $(this);
+    //     addActiveClass($this);
+    //   });
+    // });
 
 
     //  open sidebar-folded when hover
     $(".sidebar .sidebar-body").hover(
-    function () {
-      if (body.hasClass('sidebar-folded')){
-        body.addClass("open-sidebar-folded");
-      }
-    },
-    function () {
-      if (body.hasClass('sidebar-folded')){
-        body.removeClass("open-sidebar-folded");
-      }
-    });
+      function () {
+        if (body.hasClass('sidebar-folded')) {
+          body.addClass("open-sidebar-folded");
+        }
+      },
+      function () {
+        if (body.hasClass('sidebar-folded')) {
+          body.removeClass("open-sidebar-folded");
+        }
+      });
 
 
     // close sidebar when click outside on mobile/table    
-    $(document).on('click touchstart', function(e){
+    $(document).on('click touchstart', function (e) {
       e.stopPropagation();
 
       // closing of sidebar menu when clicking outside of it
@@ -164,31 +200,31 @@
         var sidebar = $(e.target).closest('.sidebar').length;
         var sidebarBody = $(e.target).closest('.sidebar-body').length;
         if (!sidebar && !sidebarBody) {
-        if ($('body').hasClass('sidebar-open')) {
-          $('body').removeClass('sidebar-open');
-        }
+          if ($('body').hasClass('sidebar-open')) {
+            $('body').removeClass('sidebar-open');
+          }
         }
       }
     });
 
 
     //Horizontal menu in mobile
-    $('[data-toggle="horizontal-menu-toggle"]').on("click", function() {
+    $('[data-toggle="horizontal-menu-toggle"]').on("click", function () {
       $(".horizontal-menu .bottom-navbar").toggleClass("header-toggled");
     });
     // Horizontal menu navigation in mobile menu on click
     var navItemClicked = $('.horizontal-menu .page-navigation >.nav-item');
-    navItemClicked.on("click", function(event) {
-      if(window.matchMedia('(max-width: 991px)').matches) {
-        if(!($(this).hasClass('show-submenu'))) {
+    navItemClicked.on("click", function (event) {
+      if (window.matchMedia('(max-width: 991px)').matches) {
+        if (!($(this).hasClass('show-submenu'))) {
           navItemClicked.removeClass('show-submenu');
         }
         $(this).toggleClass('show-submenu');
-      }        
+      }
     })
 
-    $(window).scroll(function() {
-      if(window.matchMedia('(min-width: 992px)').matches) {
+    $(window).scroll(function () {
+      if (window.matchMedia('(min-width: 992px)').matches) {
         var header = $('.horizontal-menu');
         if ($(window).scrollTop() >= 60) {
           $(header).addClass('fixed-on-scroll');
@@ -205,7 +241,7 @@
     }, function () {
       $('body').removeClass('overflow-hidden');
     });
-   
+
 
   });
 })(jQuery);

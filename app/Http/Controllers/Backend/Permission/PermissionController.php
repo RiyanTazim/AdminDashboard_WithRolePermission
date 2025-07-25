@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Validator;
 use Spatie\Permission\Models\Permission;
 
 class PermissionController extends Controller//implements HasMiddleware
+
 {
     public function __construct()
     {
@@ -22,8 +23,23 @@ class PermissionController extends Controller//implements HasMiddleware
     //method to display a list of permissions
     public function index()
     {
-        $permissions = Permission::orderBy('created_at', 'asc')->paginate(10);
-        return view('Backend.Permission.list', compact('permissions'));
+        // $permissions = Permission::orderBy('created_at', 'asc')->paginate(10);
+        return view('Backend.Permission.list');
+    }
+
+    public function getData(Request $request)
+    {
+        $data = Permission::orderBy('id', 'asc')->get();
+        return datatables()->of($data)
+            ->addIndexColumn()
+            ->addColumn('action', function ($row) {
+                return '<a href="' . route('permission.edit', $row->id) . '" class="btn btn-sm btn-inverse-warning"><i data-feather="edit"></i></a>
+                         <a href="javascript:void(0);" data-id="' . $row->id . '" class="btn btn-sm btn-inverse-danger delete-btn" title="Delete">
+                            <i data-feather="trash-2"></i>
+                            </a>';
+            })
+            ->rawColumns(['action'])
+            ->make(true);
     }
 
     public function create()

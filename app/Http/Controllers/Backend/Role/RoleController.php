@@ -3,13 +3,13 @@ namespace App\Http\Controllers\Backend\Role;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Facades\Validator;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
-use Illuminate\Routing\Controllers\Middleware;
-use Illuminate\Routing\Controllers\HasMiddleware;
 
-class RoleController extends Controller //implements HasMiddleware
+class RoleController extends Controller//implements HasMiddleware
+
 {
     public function __construct()
     {
@@ -23,8 +23,27 @@ class RoleController extends Controller //implements HasMiddleware
     }
     public function index()
     {
-        $roles = Role::orderBy('created_at', 'asc')->paginate(10);
-        return view('Backend.Role.list', compact('roles'));
+        // $roles = Role::orderBy('created_at', 'asc')->paginate(10);
+        return view('Backend.Role.list');
+    }
+
+    public function getData(Request $request)
+    {
+        $data = Role::with('permissions')->get(); // Eager load permissions
+
+        return datatables()->of($data)
+            ->addIndexColumn()
+            ->addColumn('permissions', function ($row) {
+                return $row->permissions->pluck('name')->implode(', ');
+            })
+            ->addColumn('action', function ($row) {
+                return '<a href="' . route('role.edit', $row->id) . '" class="btn btn-sm btn-inverse-warning"><i data-feather="edit"></i></a>
+                     <a href="javascript:void(0);" data-id="' . $row->id . '" class="btn btn-sm btn-inverse-danger delete-btn" title="Delete">
+                        <i data-feather="trash-2"></i>
+                    </a>';
+            })
+            ->rawColumns(['action'])
+            ->make(true);
     }
 
     public function create()

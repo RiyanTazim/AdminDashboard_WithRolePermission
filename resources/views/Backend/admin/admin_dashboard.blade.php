@@ -56,6 +56,12 @@ License: For each use you must have a valid license purchased only from above li
 
     <link rel="shortcut icon" href="{{ asset('/') }}assets/images/favicon.png" />
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css">
+    
+
+    @stack('links')
+    @stack('scriptTop')
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 
 <body>
@@ -130,9 +136,18 @@ License: For each use you must have a valid license purchased only from above li
     <script src="{{ asset('/') }}assets/js/dashboard-dark.js"></script>
     <!-- End custom js for this page -->
 
-
-
-
+    
+    
+    @stack('scripts')
+    @stack('styles')
+    
+    <!-- Turn off autocomplete for the form -->
+    {{-- <script>
+        $(document).ready(function() {
+            $('form').attr('autocomplete', 'off');
+             $('input').attr('autocomplete', 'off');
+        });
+    </script> --}}
 </body>
 
 </html>

@@ -1,14 +1,13 @@
 @extends('Backend.admin.admin_dashboard')
 
 @section('admin')
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
     <div class="pc-container">
         <div class="container py-5">
             <div class="row justify-content-center">
                 <div class="col-md-5">
                     <div class="card shadow-sm">
                         <div class="card-header bg-dark text-white">
-                            <h4 class="mb-0">Add Permission</h4>
+                            <h4 class="mb-0">Add New User</h4>
                         </div>
                         <div class="card-body">
                             <form id="permissionForm" action="{{ route('permission.store') }}" method="POST">

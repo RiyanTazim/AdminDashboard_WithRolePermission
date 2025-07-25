@@ -13,42 +13,18 @@ class MyTestMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    /**
-     * Create a new message instance.
-     */
-    public function __construct(private string $name)
-    {
-        $this->name = $name;
-    }
 
-    /**
-     * Get the message envelope.
-     */
-    public function envelope(): Envelope
-    {
-        return new Envelope(
-            subject: 'My Test Mail',
-        );
-    }
+        protected $user;
 
-    /**
-     * Get the message content definition.
-     */
-    public function content(): Content
-    {
-        return new Content(
-            view: 'Mail.testMail',
-            with: ['name' => $this->name],
-        );
-    }
+      public function __construct($user){
+        $this->user=$user;
+     }
 
-    /**
-     * Get the attachments for the message.
-     *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
-     */
-    public function attachments(): array
-    {
-        return [];
-    }
+     public function build(){
+        return $this->subject('Your Verification Code')
+            ->view('mail.testMail')
+            ->with(['user' => $this->user]);
+     }
+
+    
 }

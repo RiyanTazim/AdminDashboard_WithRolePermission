@@ -1,131 +1,120 @@
 @extends('Backend.admin.admin_dashboard')
 
+@push('links')
+    <link href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/buttons/2.3.6/css/buttons.dataTables.min.css" rel="stylesheet">
+@endpush
+
 @section('admin')
-    <style>
-        .pagination {
-            display: flex;
-            justify-content: center;
-            gap: 0.5rem;
-        }
-
-        .body-preview {
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            /* Show max 3 lines */
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: normal;
-            /* Allows wrapping */
-            word-break: break-word;
-            /* Break long words */
-            max-width: 500px;
-            /* Prevents overflow */
-            border: none;
-        }
-    </style>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
-    <div class="pc-container">
-        <div class="container py-5">
-            <div class="row justify-content-center">
-                <div class="col-md-10">
-                    <div class="card shadow-sm">
-                        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
-                            <h5 class="mb-0">Article List</h5>
-                            <a href="{{ route('article.create') }}" class="btn btn-light btn-sm">Add New</a>
-                        </div>
-
-                        <div class="card-body">
-                            @if (Session::has('success'))
-                                <div class="text-white">{{ Session::get('success') }}</div>
-                            @endif
-
-                            @if ($articles->isEmpty())
-                                <p class="text-muted mb-0">No Article found.</p>
-                            @else
-                                <div class="table-responsive">
-                                    <table class="table table-bordered table-hover">
-                                        <thead>
-                                            <tr>
-                                                <th>SL</th>
-                                                <th>Title</th>
-                                                <th>Content</th>
-                                                <th>Author</th>
-                                                <th style="width: 250px;">Actions</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach ($articles as $index => $article)
-                                                <tr>
-                                                    <td>{{ $index + 1 }}</td>
-                                                    <td>{{ $article->title }}</td>
-                                                    <td class="body-preview">{{ $article->body }}</td>
-                                                    <td>{{ $article->author }}</td>
-                                                    {{-- <td>
-                                                        <a href="{{ route('article.edit', $article->id) }}"
-                                                            class="btn btn-sm btn-inverse-warning" title="Edit"><i
-                                                                data-feather="edit"></i></a>
-                                                        <a href="{{ route('article.delete', $article->id) }}"
-                                                            class="btn btn-sm btn-inverse-danger delete-confirm"
-                                                            title="Delete">
-                                                            <i data-feather="trash-2"></i>
-                                                        </a>
-
-                                                    </td> --}}
-                                                    <td>
-                                                        @can('Edit')
-                                                            <a href="{{ route('article.edit', $article->id) }}"
-                                                                class="btn btn-sm btn-inverse-warning" title="Edit">
-                                                                <i data-feather="edit"></i>
-                                                            </a>
-                                                        @endcan
-
-                                                        @can('Delete')
-                                                            <a href="{{ route('article.delete', $article->id) }}"
-                                                                class="btn btn-sm btn-inverse-danger delete-confirm"
-                                                                title="Delete">
-                                                                <i data-feather="trash-2"></i>
-                                                            </a>
-                                                        @endcan
-                                                    </td>
-                                                </tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
-                                </div>
-                            @endif
-                            <div class="d-flex mt-3 ms-auto justify-content-end">
-                                {{ $articles->links() }}
-                            </div>
-                        </div>
-                    </div>
+    <div class="container py-5">
+        <div class="card">
+            <div class="card-header bg-dark text-white d-flex justify-content-between">
+                <h5 class="mb-0">Articles List</h5>
+                <a href="{{ route('dynamicpage.create') }}" class="btn btn-light btn-sm">Add New</a>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table id="articleTable" class="table table-bordered table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th class="text-center" width="5%">SL</th>
+                                <th class="text-center">Title</th>
+                                <th class="text-center">Content</th>
+                                <th class="text-center">Author</th>
+                                <th class="text-center" width="15%">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
                 </div>
             </div>
         </div>
     </div>
+@endsection
 
+@push('scripts')
+    <!-- ✅ jQuery FIRST -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+
+    <!-- ✅ DataTables CSS and JS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+
+    <!-- ✅ Initialize DataTable -->
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            document.querySelectorAll('.delete-confirm').forEach(function(button) {
-                button.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const url = this.getAttribute('href');
+        $(document).ready(function() {
 
-                    Swal.fire({
-                        title: 'Are you sure?',
-                        text: "This action cannot be undone.",
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonColor: '#3085d6',
-                        cancelButtonColor: '#d33',
-                        confirmButtonText: 'Yes, delete it!'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            window.location.href = url;
-                        }
-                    });
-                });
+            $('#articleTable').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: "{{ route('article.getData') }}",
+                columns: [{
+                        data: 'DT_RowIndex',
+                        name: 'DT_RowIndex',
+                        className: 'text-center'
+                    },
+                    {
+                        data: 'title',
+                        name: 'title'
+                    },
+                    {
+                        data: 'body',
+                        name: 'body'
+                    },
+                    {
+                        data: 'author',
+                        name: 'author',
+                        className: 'text-center'
+                    },
+                    {
+                        data: 'action',
+                        name: 'action',
+                        orderable: false,
+                        searchable: false,
+                        className: 'text-center'
+                    },
+                ],
+                drawCallback: function(settings) {
+                    if (window.feather) {
+                        feather.replace(); // 🟢 Replaces feather icons after each redraw
+                    }
+                }
             });
+            $('.dataTables_filter input').attr('placeholder', 'Search...');
+
         });
     </script>
-@endsection
+@endpush
+
+@push('styles')
+    <style>
+        /* Prevent unnecessary horizontal scroll */
+        #articleTable_wrapper {
+            overflow-x: auto;
+        }
+
+        table.dataTable {
+            width: 100% !important;
+        }
+
+        .select {
+            color: #ffffff !important;
+        }
+
+        .dataTables_wrapper .dataTables_length select {
+            color: #ffffff !important;
+        }
+
+        .dataTables_wrapper .dataTables_filter input {
+            /* placeholder: #ffffff !important; */
+            color: #ffffff
+        }
+    </style>
+@endpush

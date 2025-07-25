@@ -11,9 +11,8 @@
                 <div class="card rounded">
                     <div class="card-body">
                         <div class="d-flex align-items-center justify-content-between mb-2">
-
                             <img class="wd-100 rounded-circle"
-                                src="{{ !empty($profileData->photo) ? url('upload/user_images/' . $profileData->photo) : url('upload/no_image.jpg') }}"
+                                src="{{ !empty($profileData->photo) ? url('upload/admin_images/' . $profileData->photo) : url('upload/no_image.jpg') }}"
                                 alt="profile">
 
                             {{-- <span class="h4 ms-4 ">{{ $profileData->name }}</span> --}}
@@ -113,16 +112,17 @@
             </div>
 
         </div>
+    </div>
 
-        <script type="text/javascript">
-            $(document).ready(function() {
-                $('#image').change(function(e) {
-                    var reader = new FileReader();
-                    reader.onload = function(e) {
-                        $('#showImage').attr('src', e.target.result);
-                    }
-                    reader.readAsDataURL(e.target.files['0']);
-                });
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('#image').change(function(e) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    $('#showImage').attr('src', e.target.result);
+                }
+                reader.readAsDataURL(e.target.files['0']);
             });
-        </script>
-    @endsection
+        });
+    </script>
+@endsection

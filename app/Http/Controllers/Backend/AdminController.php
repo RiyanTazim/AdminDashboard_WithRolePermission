@@ -5,14 +5,15 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Spatie\Permission\Models\Role;
 
-class AdminController extends Controller //implements HasMiddleware
+class AdminController extends Controller//implements HasMiddleware
+
 {
     public function __construct()
     {
@@ -112,14 +113,92 @@ class AdminController extends Controller //implements HasMiddleware
         ]);
     }
 
+    ///////////////// User List /////////////////
     public function adminuserlist()
     {
-        $users = User::paginate(10);
-        // $users = User::where('role', 'user')->paginate(10);
-
-        return view('Backend.admin.user_list', compact('users'));
+        return view('Backend.admin.user_list');
     }
 
+    public function getData(Request $request)
+    {
+        // $data = User::with('roles')->get();
+        $data = User::whereDoesntHave('roles', function ($query) {
+            $query->where('name', 'Super Admin');
+        })->with('roles')->get();
+
+        return datatables()->of($data)
+            ->addIndexColumn()
+            ->addColumn('photo', function ($row) {
+                $userPath    = public_path('upload/user_images/' . $row->photo);
+                $adminPath   = public_path('upload/admin_images/' . $row->photo);
+                $defaultPath = asset('upload/no_image.jpg');
+
+                if (File::exists($userPath)) {
+                    $image = asset('upload/user_images/' . $row->photo);
+                } elseif (File::exists($adminPath)) {
+                    $image = asset('upload/admin_images/' . $row->photo);
+                } else {
+                    $image = $defaultPath;
+                }
+
+                return '<img src="' . $image . '" alt="image" height="60px" width="60px" class="rounded-circle">';
+            })
+            ->addColumn('roles', function ($row) {
+                return $row->getRoleNames()->implode(', ');
+            })
+            ->addColumn('status', function ($row) {
+                $statusClass = $row->status === 'active' ? 'success' : 'danger';
+                $statusText  = ucfirst($row->status);
+                $statusUrl   = route('user.status', $row->id);
+
+                return '<a href="' . $statusUrl . '" class="btn btn-inverse-' . $statusClass . '">' . $statusText . '</a>';
+            })
+            ->addColumn('action', function ($row) {
+                return '<a href="' . route('user.password.reset', $row->id) . '" class="btn btn-outline-info my-1">Reset Password</a>
+                    <a href="' . route('user.profile.edit', $row->id) . '" class="btn btn-sm btn-inverse-warning"><i data-feather="edit"></i></a>
+                    <a href="javascript:void(0);" data-id="' . $row->id . '" class="btn btn-sm btn-inverse-danger delete-btn" title="Delete">
+                        <i data-feather="trash-2"></i>
+                    </a>';
+            })
+            ->rawColumns(['photo', 'status', 'action'])
+            ->make(true);
+    }
+
+    public function adminusercreate()
+    {
+        $roles = Role::orderBy('name', 'asc')->get();
+        return view('Backend.admin.user_create', compact('roles'));
+    }
+
+    public function adminUserStore(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'name'     => 'required',
+            'username' => 'required|unique:users,username',
+            'email'    => 'required|email|unique:users,email',
+            'password' => 'required|confirmed',
+            'roles'    => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        $user = User::create([
+            'name'     => $request->name,
+            'username' => $request->username,
+            'email'    => $request->email,
+            'password' => Hash::make($request->password),
+        ]);
+
+        $user->assignRole($request->roles);
+
+        $notification = [
+            'message'    => 'User Created Successfully',
+            'alert-type' => 'success',
+        ];
+        return redirect()->route('admin.user.list')->with($notification);
+    }
     ///////////////// User Status Change /////////////////
 
     public function userstatus($id)
@@ -153,48 +232,6 @@ class AdminController extends Controller //implements HasMiddleware
         return view('Backend.admin.user_password_reset', compact('profileData'));
 
     }
-
-    // public function userpasswordupdate(Request $request, $id)
-    // {
-
-    //     $user = User::find($id);
-    //     if ($request->password) {
-    //         $request->validate([
-
-    //             'password' => 'required|confirmed',
-    //         ]);
-    //         $user->password = $request->password;
-    //     }
-    //     $user->save();
-
-    //     // $request->validate([
-    //     //     'old_password' => 'required',
-    //     //     'new_password' => 'required|confirmed'
-    //     // ]);
-
-    //     ///Match Password
-
-    //     // if(!Hash::check($request->old_password, User::where('id', $id)->get()->password)){
-
-    //     //     $notification  = array(
-    //     //         'message' => 'Old Password Does not Match',
-    //     //         'alert-type' => 'error'
-    //     //     );
-    //     //     return back()->with($notification);
-    //     // }
-
-    //     ///Update new password
-
-    //     // User::whereId($users()->id)->update([
-    //     //     'password' => Hash::make($request->new_password)
-    //     // ]);
-
-    //     $notification = [
-    //         'message'    => 'Password Changed Successfully',
-    //         'alert-type' => 'success',
-    //     ];
-    //     return back()->with($notification);
-    // }
 
     public function userpasswordupdate(Request $request, $id)
     {

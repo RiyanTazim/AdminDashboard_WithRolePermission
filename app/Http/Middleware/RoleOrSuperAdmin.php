@@ -6,9 +6,11 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Auth;
+use Spatie\Permission\Traits\HasRoles;
 
 class RoleOrSuperAdmin
 {
+    use HasRoles;
     /**
      * Handle an incoming request.
      *
