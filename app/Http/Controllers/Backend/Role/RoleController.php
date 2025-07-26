@@ -24,7 +24,7 @@ class RoleController extends Controller//implements HasMiddleware
     public function index()
     {
         // $roles = Role::orderBy('created_at', 'asc')->paginate(10);
-        return view('Backend.Role.list');
+        return view('Backend.Layout.Role.list');
     }
 
     public function getData(Request $request)
@@ -49,7 +49,7 @@ class RoleController extends Controller//implements HasMiddleware
     public function create()
     {
         $permissions = Permission::orderBy('name', 'asc')->get();
-        return view('Backend.Role.create', compact('permissions'));
+        return view('Backend.Layout.Role.create', compact('permissions'));
     }
 
     public function store(Request $request)
@@ -85,7 +85,7 @@ class RoleController extends Controller//implements HasMiddleware
         $role           = Role::findOrFail($id);
         $permissions    = Permission::orderBy('name', 'asc')->get();
         $hasPermissions = $role->permissions->pluck('name')->toArray();
-        return view('Backend.Role.edit', compact('role', 'permissions', 'hasPermissions'));
+        return view('Backend.Layout.Role.edit', compact('role', 'permissions', 'hasPermissions'));
     }
 
     public function update(Request $request, $id)

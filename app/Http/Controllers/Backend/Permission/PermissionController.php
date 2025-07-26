@@ -24,7 +24,7 @@ class PermissionController extends Controller//implements HasMiddleware
     public function index()
     {
         // $permissions = Permission::orderBy('created_at', 'asc')->paginate(10);
-        return view('Backend.Permission.list');
+        return view('Backend.Layout.Permission.list');
     }
 
     public function getData(Request $request)
@@ -44,7 +44,7 @@ class PermissionController extends Controller//implements HasMiddleware
 
     public function create()
     {
-        return view('Backend.Permission.create');
+        return view('Backend.Layout.Permission.create');
     }
 
     public function store(Request $request)
@@ -74,7 +74,7 @@ class PermissionController extends Controller//implements HasMiddleware
     public function edit($id)
     {
         $permission = Permission::findOrFail($id);
-        return view('Backend.Permission.edit', compact('permission'));
+        return view('Backend.Layout.Permission.edit', compact('permission'));
     }
 
     public function update(Request $request, $id)

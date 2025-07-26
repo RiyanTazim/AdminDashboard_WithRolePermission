@@ -1,12 +1,12 @@
 <?php
 
-use App\Http\Controllers\Backend\AdminController;
+use App\Http\Controllers\Backend\Admin\AdminController;
 use App\Http\Controllers\Backend\Article\ArticleController;
-use App\Http\Controllers\Backend\DynamicPageController;
-use App\Http\Controllers\Backend\Mail\SMTPController;
+use App\Http\Controllers\Backend\DynamicPage\DynamicPageController;
+use App\Http\Controllers\Backend\SMTP\SMTPController;
 use App\Http\Controllers\Backend\Permission\PermissionController;
 use App\Http\Controllers\Backend\Role\RoleController;
-use App\Http\Controllers\Backend\UserContoller;
+use App\Http\Controllers\Backend\User\UserContoller;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 

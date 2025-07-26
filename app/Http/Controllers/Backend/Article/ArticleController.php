@@ -36,7 +36,7 @@ class ArticleController extends Controller//implements HasMiddleware
         //         ->make(true);
         // }
 
-        return view('Backend.Article.list');
+        return view('Backend.Layout.Article.list');
     }
 
     public function getData(Request $request)
@@ -58,7 +58,7 @@ class ArticleController extends Controller//implements HasMiddleware
 
     public function create()
     {
-        return view('Backend.Article.create');
+        return view('Backend.Layout.Article.create');
     }
 
     public function store(Request $request)
@@ -89,7 +89,7 @@ class ArticleController extends Controller//implements HasMiddleware
     public function edit($id)
     {
         $article = Article::findOrFail($id);
-        return view('Backend.Article.edit', compact('article'));
+        return view('Backend.Layout.Article.edit', compact('article'));
     }
 
     public function update(Request $request, $id)
